@@ -14,3 +14,4 @@ Add script
 - `data-wio-particle-wave` mandatory to enable Particles Wave Interaction on the element | should be set as `true`.
 - `data-wio-interaction` to make interaction move user interactive | `true` or `false`, default is `false`.
 - `data-wio-color` to change particle color | should be set as HEX value e.g. `#FFFFFF`, default is `#000000`
+- `data-wio-speed` waving speed | between `0` and `1`, default is `0.1`

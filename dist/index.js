@@ -15,6 +15,9 @@ function convertDataSetToParticleWaveOptions(el) {
             case "wioColor":
                 options["color"] = dataSet[key];
                 break;
+            case "wioSpeed":
+                options["speed"] = Math.min(1, Math.max(0, parseFloat(dataSet[key])));
+                break;
             default:
                 break;
         }
@@ -22,6 +25,7 @@ function convertDataSetToParticleWaveOptions(el) {
     var defaultOptions = {
         interaction: false,
         color: "#000000",
+        speed: 0.1,
     };
     for (var key in defaultOptions) {
         if (!(key in options)) {
@@ -143,7 +147,7 @@ function initializeParticleWave(el) {
         particles.geometry.attributes.scale.needsUpdate =
             true;
         renderer.render(scene, camera);
-        count += 0.1;
+        count += options.speed;
     };
     var animate = function () {
         requestAnimationFrame(animate);

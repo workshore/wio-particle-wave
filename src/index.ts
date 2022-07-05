@@ -19,6 +19,7 @@ function getAllWioParticleWave() {
 type ParticleWaveOptions = {
   interaction: boolean;
   color: string;
+  speed: number;
 };
 
 function convertDataSetToParticleWaveOptions(
@@ -35,6 +36,12 @@ function convertDataSetToParticleWaveOptions(
       case "wioColor":
         options["color"] = dataSet[key];
         break;
+      case "wioSpeed":
+        options["speed"] = Math.min(
+          1,
+          Math.max(0, parseFloat(dataSet[key]))
+        );
+        break;
       default:
         break;
     }
@@ -42,6 +49,7 @@ function convertDataSetToParticleWaveOptions(
   const defaultOptions = {
     interaction: false,
     color: "#000000",
+    speed: 0.1,
   };
 
   for (const key in defaultOptions) {
@@ -258,7 +266,7 @@ function initializeParticleWave(el: HTMLElement) {
 
     renderer.render(scene, camera);
 
-    count += 0.1;
+    count += options.speed;
   };
   const animate = () => {
     requestAnimationFrame(animate);
