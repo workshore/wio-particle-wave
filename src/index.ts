@@ -20,6 +20,8 @@ type ParticleWaveOptions = {
   interaction: boolean;
   color: string;
   speed: number;
+  fillSize: boolean;
+  initialTopPosition: number;
 };
 
 function convertDataSetToParticleWaveOptions(
@@ -33,6 +35,10 @@ function convertDataSetToParticleWaveOptions(
         options["interaction"] =
           dataSet[key] === "true";
         break;
+      case "wioFillSize":
+        options["fillSize"] =
+          dataSet[key] === "true";
+        break;
       case "wioColor":
         options["color"] = dataSet[key];
         break;
@@ -42,6 +48,11 @@ function convertDataSetToParticleWaveOptions(
           Math.max(0, parseFloat(dataSet[key]))
         );
         break;
+      case "wioInitialTopPosition":
+        options["initialTopPosition"] =
+          parseFloat(dataSet[key]);
+
+        break;
       default:
         break;
     }
@@ -50,6 +61,8 @@ function convertDataSetToParticleWaveOptions(
     interaction: false,
     color: "#000000",
     speed: 0.1,
+    fillSize: true,
+    initialTopPosition: -200,
   };
 
   for (const key in defaultOptions) {
@@ -76,7 +89,7 @@ function initializeParticleWave(el: HTMLElement) {
     count = 0;
 
   let mouseX = 0,
-    mouseY = -200;
+    mouseY = options.initialTopPosition;
 
   let windowHalfX = window.innerWidth / 2;
   let windowHalfY = window.innerHeight / 2;
@@ -102,6 +115,7 @@ function initializeParticleWave(el: HTMLElement) {
       -200,
       (event.clientY - windowHalfY) * 3
     );
+    // console.log(mouseY);
   };
 
   const init = (el: HTMLElement) => {
@@ -194,12 +208,14 @@ function initializeParticleWave(el: HTMLElement) {
       antialias: true,
       alpha: true,
     });
-    renderer.domElement.style.position =
-      "absolute";
-    renderer.domElement.style.top = "0px";
-    renderer.domElement.style.bottom = "0px";
-    renderer.domElement.style.left = "0px";
-    renderer.domElement.style.right = "0px";
+    if (options.fillSize) {
+      renderer.domElement.style.position =
+        "absolute";
+      renderer.domElement.style.top = "0px";
+      renderer.domElement.style.bottom = "0px";
+      renderer.domElement.style.left = "0px";
+      renderer.domElement.style.right = "0px";
+    }
 
     renderer.setClearColor(0x000000, 0);
     renderer.setPixelRatio(

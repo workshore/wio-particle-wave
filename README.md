@@ -15,3 +15,5 @@ Add script
 - `data-wio-interaction` to make interaction move user interactive | `true` or `false`, default is `false`.
 - `data-wio-color` to change particle color | should be set as HEX value e.g. `#FFFFFF`, default is `#000000`
 - `data-wio-speed` waving speed | between `0` and `1`, default is `0.1`
+- `data-wio-fill-size` weather particle canvas use the css positioning | `true` or `false`. Default is `true`.
+- `data-wio-initial-top-position` useful when needs to adjust the initial top view position. | `number` value, default is `-200`

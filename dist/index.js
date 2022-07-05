@@ -12,11 +12,19 @@ function convertDataSetToParticleWaveOptions(el) {
                 options["interaction"] =
                     dataSet[key] === "true";
                 break;
+            case "wioFillSize":
+                options["fillSize"] =
+                    dataSet[key] === "true";
+                break;
             case "wioColor":
                 options["color"] = dataSet[key];
                 break;
             case "wioSpeed":
                 options["speed"] = Math.min(1, Math.max(0, parseFloat(dataSet[key])));
+                break;
+            case "wioInitialTopPosition":
+                options["initialTopPosition"] =
+                    parseFloat(dataSet[key]);
                 break;
             default:
                 break;
@@ -26,6 +34,8 @@ function convertDataSetToParticleWaveOptions(el) {
         interaction: false,
         color: "#000000",
         speed: 0.1,
+        fillSize: true,
+        initialTopPosition: -200,
     };
     for (var key in defaultOptions) {
         if (!(key in options)) {
@@ -41,7 +51,7 @@ function initializeParticleWave(el) {
     var container;
     var camera, scene, renderer;
     var particles, count = 0;
-    var mouseX = 0, mouseY = -200;
+    var mouseX = 0, mouseY = options.initialTopPosition;
     var windowHalfX = window.innerWidth / 2;
     var windowHalfY = window.innerHeight / 2;
     var onWindowResize = function () {
@@ -57,6 +67,7 @@ function initializeParticleWave(el) {
             return;
         mouseX = event.clientX - windowHalfX;
         mouseY = Math.min(-200, (event.clientY - windowHalfY) * 3);
+        // console.log(mouseY);
     };
     var init = function (el) {
         container = el;
@@ -102,12 +113,14 @@ function initializeParticleWave(el) {
             antialias: true,
             alpha: true,
         });
-        renderer.domElement.style.position =
-            "absolute";
-        renderer.domElement.style.top = "0px";
-        renderer.domElement.style.bottom = "0px";
-        renderer.domElement.style.left = "0px";
-        renderer.domElement.style.right = "0px";
+        if (options.fillSize) {
+            renderer.domElement.style.position =
+                "absolute";
+            renderer.domElement.style.top = "0px";
+            renderer.domElement.style.bottom = "0px";
+            renderer.domElement.style.left = "0px";
+            renderer.domElement.style.right = "0px";
+        }
         renderer.setClearColor(0x000000, 0);
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
