@@ -69,7 +69,9 @@ function initializeParticleWave(el) {
         mouseY = Math.min(-200, (event.clientY - windowHalfY) * 3);
         // console.log(mouseY);
     };
+    var initMode = 0;
     var init = function (el) {
+        var initMode = 1;
         container = el;
         camera = new PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 10000);
         camera.position.z = 1000;
@@ -126,12 +128,13 @@ function initializeParticleWave(el) {
         renderer.setSize(window.innerWidth, window.innerHeight);
         container.appendChild(renderer.domElement);
         container.style.touchAction = "none";
+        initMode = 2;
         if (options.interaction)
             document.body.addEventListener("pointermove", onPointerMove);
         //
         window.addEventListener("resize", onWindowResize);
     };
-    init(el);
+    //init(el);
     var render = function () {
         camera.position.x +=
             (mouseX - camera.position.x) * 0.05;
@@ -162,10 +165,38 @@ function initializeParticleWave(el) {
         renderer.render(scene, camera);
         count += options.speed;
     };
+    var visibility = 0;
     var animate = function () {
         requestAnimationFrame(animate);
-        render();
+        if (visibility > 0.1) {
+            if (initMode === 2)
+                render();
+            else if (initMode === 0) {
+                initMode = 1;
+                init(el);
+                initMode = 2;
+            }
+        }
     };
+    function buildThresholdList() {
+        var thresholds = [];
+        var numSteps = 100;
+        for (var i = 1.0; i <= numSteps; i++) {
+            var ratio = i / numSteps;
+            thresholds.push(ratio);
+        }
+        thresholds.push(0);
+        return thresholds;
+    }
+    var observer = new IntersectionObserver(function (e, o) {
+        visibility = e[0].intersectionRatio * 100;
+        //console.log(visibility, el);
+    }, {
+        root: null,
+        rootMargin: "0px",
+        threshold: buildThresholdList(),
+    });
+    observer.observe(el);
     animate();
 }
 document.addEventListener("DOMContentLoaded", function () {

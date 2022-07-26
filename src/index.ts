@@ -117,8 +117,10 @@ function initializeParticleWave(el: HTMLElement) {
     );
     // console.log(mouseY);
   };
+  let initMode = 0;
 
   const init = (el: HTMLElement) => {
+    let initMode = 1;
     container = el;
 
     camera = new PerspectiveCamera(
@@ -229,6 +231,8 @@ function initializeParticleWave(el: HTMLElement) {
 
     container.style.touchAction = "none";
 
+    initMode = 2;
+
     if (options.interaction)
       document.body.addEventListener(
         "pointermove",
@@ -242,7 +246,7 @@ function initializeParticleWave(el: HTMLElement) {
       onWindowResize
     );
   };
-  init(el);
+  //init(el);
   const render = () => {
     camera.position.x +=
       (mouseX - camera.position.x) * 0.05;
@@ -284,10 +288,45 @@ function initializeParticleWave(el: HTMLElement) {
 
     count += options.speed;
   };
+  let visibility = 0;
+
   const animate = () => {
     requestAnimationFrame(animate);
-    render();
+    if (visibility > 0.1) {
+      if (initMode === 2) render();
+      else if (initMode === 0) {
+        initMode = 1;
+        init(el);
+        initMode = 2;
+      }
+    }
   };
+  function buildThresholdList() {
+    let thresholds = [];
+    let numSteps = 100;
+
+    for (let i = 1.0; i <= numSteps; i++) {
+      let ratio = i / numSteps;
+      thresholds.push(ratio);
+    }
+
+    thresholds.push(0);
+    return thresholds;
+  }
+  let observer = new IntersectionObserver(
+    (e, o) => {
+      visibility = e[0].intersectionRatio * 100;
+
+      //console.log(visibility, el);
+    },
+    {
+      root: null,
+      rootMargin: "0px",
+      threshold: buildThresholdList(),
+    }
+  );
+
+  observer.observe(el);
   animate();
 }
 
